@@ -2,6 +2,11 @@
     #div_books img{
         cursor: pointer;
     }
+    #div_books .bi-cart-check{
+        cursor: pointer;
+        color:green;
+        fonr-size: 1.5rem;
+    }
 </style>
 <div class="row my-5">
     <div class="col">
@@ -36,6 +41,7 @@
                 </div>
              <div class="card-footer" style="font-size:0.8rem;">{{price}}</div>
                 {{format price}}
+                <i class="bi bi-cart-check float-end" book="{{book @this}}"></i>
             </div>
         </div>
         <%-include('books/modal.ejs')%>
@@ -53,6 +59,10 @@
     Handlebars.registerHelper("format", function(price){
         return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '원'; //정규식이니 구글링할 것  
     });
+
+    Handlebars.registerHelper("book", function(book) {
+        return JSON.stringify(book); //object => String
+    })
 </script>
 
 
@@ -62,6 +72,16 @@
 
     getBooks();
     
+    //장바구니를 눌렀을 떄
+    $("#div_books").on("click", ".bi-cart-check", function(){
+        if(!sessionStorage.getItem("email")){
+            location.href="/users/login";
+        }else{
+            //장바구니에 등록
+            const book=JSON.parse($(this).attr("book")); //String => object
+            console.log(book);
+        }
+    });
     //이미지를 클릭한 경우
     $("#div_books").on("click", "img", function(){
         let index=$(this).attr("index");
