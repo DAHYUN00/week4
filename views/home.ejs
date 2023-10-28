@@ -41,7 +41,7 @@
                 </div>
              <div class="card-footer" style="font-size:0.8rem;">{{price}}</div>
                 {{format price}}
-                <i class="bi bi-cart-check float-end" book="{{book @this}}"></i>
+                <i class="cart bi bi-cart-check float-end" book="{{book @this}}"></i>
             </div>
         </div>
         <%-include('books/modal.ejs')%>
@@ -62,26 +62,41 @@
 
     Handlebars.registerHelper("book", function(book) {
         return JSON.stringify(book); //object => String
-    })
+    });
 </script>
 
 
-<script>
+<script type="module"> // 모듈 이거 시험
+  import { app } from "/javascripts/firebase.js";
+  import { getDatabase, ref, set, get }
+    from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js"
+    const db=getDatabase(app); // 앱 이거 시험
+
     let query=$(frm.query).val();
     let page=1;
 
     getBooks();
     
-    //장바구니를 눌렀을 떄
-    $("#div_books").on("click", ".bi-cart-check", function(){
-        if(!sessionStorage.getItem("email")){
+    //장바구니 아이콘을 클릭한 경우
+    $("#div_books").on("click", ".cart", async function(){
+        if(!sessionStorage.getItem("uid")) {
             location.href="/users/login";
-        }else{
-            //장바구니에 등록
-            const book=JSON.parse($(this).attr("book")); //String => object
-            console.log(book);
+            return;
         }
-    });
+
+        //장바구니에 있는지 체크
+       const book=JSON.parse($(this).attr("book")) // 위에 40열쯤에 book에서 가져온거 이거시험
+       const ref_cart=ref(db, `cart/${sessionStorage.getItem("uid")}/${book.isbn}`);
+       const result = await get(ref_cart);
+       if(result.val()){
+        alert("이미 장바구니에 추가되었습니다.");
+       }else{
+        if(!confirm("장바구니에 추가하실래요?")) return;
+        set(ref_cart, book);
+        alert("장바구니에 추가되었습니다.");
+       }
+    });             
+   
     //이미지를 클릭한 경우
     $("#div_books").on("click", "img", function(){
         let index=$(this).attr("index");

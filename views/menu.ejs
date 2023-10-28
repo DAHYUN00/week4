@@ -11,6 +11,12 @@
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="/locals">지역검색</a>
           </li>
+          <li class="nav-item" id="cart" style="display: none;">
+            <a class="nav-link active" aria-current="page" href="/books/cart">장바구니</a>
+          </li>
+          <li class="nav-item" id="favorite" style="display: none;">
+            <a class="nav-link active" aria-current="page" href="/locals/favorite">즐겨찾기</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link disabled" aria-disabled="true"></a>
           </li>
@@ -35,7 +41,7 @@
   </nav>
   <script>
     if(sessionStorage.getItem("email")){
-      $("#login, #email, #logout").toggle();
+      $("#login, #email, #logout, #cart, #favorite").toggle();
       $("#email a").html(sessionStorage.getItem("email"));
     }
 
